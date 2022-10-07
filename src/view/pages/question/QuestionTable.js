@@ -40,6 +40,7 @@ import throttle from "lodash.throttle";
 import formatDate, { BACKEND_URL } from "../../utils/formatDate";
 import { useHistory } from "react-router";
 import axios from "axios";
+import { getByPAckageId } from "../../../API/Questions";
 
 const TableCell = withStyles((theme) => ({
   head: {
@@ -207,11 +208,16 @@ export default function QuestionTable({ filter, openFilterDrawer }) {
 
   useEffect(async () => {
     // dispatch(fetchQuestions({ page: currentPage, limit }));
-    const { data } = await axios.get(`${BACKEND_URL}/api/v1/package-question`, {
-      params: { package: params.package },
+    // alert("here");
+    getByPAckageId(params.package, (res) => {
+      console.log(res, "newquestion");
+      setQuestions(res.data);
     });
-    console.log(data, "<<<<data");
-    setQuestions(data.data);
+    // const { data } = await axios.get(`${BACKEND_URL}/api/v1/package-question`, {
+    //   params: { package: params.package },
+    // });
+    // console.log(data, "<<<<data");
+    // setQuestions(data.data);
   }, [currentPage, dispatch, limit, refresPage]);
 
   const handleChangePage = (_, newPage) => {
@@ -272,7 +278,7 @@ export default function QuestionTable({ filter, openFilterDrawer }) {
                 style={{ color: "red", cursor: "pointer" }}
                 onClick={() => deleteThisQue(data)}
               >
-                Delete
+                {/* Delete */}
               </Typography>
             </div>
           </div>
@@ -283,8 +289,35 @@ export default function QuestionTable({ filter, openFilterDrawer }) {
         </div>
         <Box
           mt="1rem"
-          dangerouslySetInnerHTML={{ __html: data.questionTitle }}
-        ></Box>
+          // dangerouslySetInnerHTML={{ __html: data.questionTitle }}
+        >
+          {data.question}
+        </Box>
+        <div>
+          <Typography
+            variant="h5"
+            style={{ color: "red", cursor: "pointer", marginTop: "10px" }}
+            // onClick={() => deleteThisQue(data)}
+          >
+            {/* Delete */}
+            Options
+          </Typography>
+        </div>
+
+        {data.options.map((item) => {
+          return (
+            <Box
+              mt="0.5rem"
+              // dangerouslySetInnerHTML={{ __html: data.questionTitle }}
+            >
+              <span style={{ fontWeight: "400", marginRight: "10px" }}>
+                {" "}
+                {item[0].option_id}
+              </span>{" "}
+              {item[0].option}
+            </Box>
+          );
+        })}
       </div>
     );
   };

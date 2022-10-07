@@ -5,7 +5,9 @@ import ProtectedRoute from "./ProtectedRoute";
 import Layout from "../component/Layout";
 
 import AdminLogin from "../pages/admin/Login";
-import Subjects from "../pages/subject";
+import Test from "../pages/test";
+import Category from "../pages/category";
+import Subject from "../pages/subject";
 import Topics from "../pages/topic";
 import SubTopics from "../pages/subTopic";
 import Dashboard from "../pages/Dashboard";
@@ -26,8 +28,22 @@ const routes = [
     showPagination: false,
   },
   {
-    path: "/subject",
-    component: Subjects,
+    path: "/test",
+    component: Test,
+    guard: false,
+    layout: true,
+    showPagination: true,
+  },
+  {
+    path: "/category",
+    component: Category,
+    guard: false,
+    layout: true,
+    showPagination: true,
+  },
+  {
+    path: "/subject/:category",
+    component: Subject,
     guard: false,
     layout: true,
     showPagination: true,

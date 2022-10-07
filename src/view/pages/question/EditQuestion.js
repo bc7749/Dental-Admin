@@ -25,7 +25,7 @@ import DraftEditor from "../../component/Editor";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Formik } from "formik";
 import * as yup from "yup";
-import SubjectAutocomplete from "../subject/SubjectAutocomplete";
+import SubjectAutocomplete from "../test/SubjectAutocomplete";
 import TopicAutocomplete from "../topic/TopicAutocomplete";
 import SubTopicAutocomplete from "../subTopic/SubTopicAutocomplete";
 import { useDispatch, useSelector } from "react-redux";

@@ -51,7 +51,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import { globalActions } from "../../../application/reducers/globalSlice";
 import services from "../../../infrastructure/services";
 import axios from "axios";
-import { newgetAllPackage, newGetAllSubjects } from "../../../API/package";
+import { newGetAllCategory, newgetAllPackage } from "../../../API/package";
 
 const TableCell = withStyles((theme) => ({
   head: {
@@ -259,7 +259,7 @@ export default function SubjectTable({ addSubject, editSubject }) {
     console.log(params, "<<<params");
 
     // const { data } = await axios.get(`${BACKEND_URL}/api/v1/package`);
-    newGetAllSubjects(params.category, (res) => {
+    newGetAllCategory((res) => {
       console.log(res, "<<<newresponser");
       setDefaultSubjects(res.data);
       setSubjectList(res.data);
@@ -284,7 +284,7 @@ export default function SubjectTable({ addSubject, editSubject }) {
     <TableContainer component={Paper}>
       <div className={classes.tableHeader}>
         <Typography className={classes.heading} variant="h3">
-          Subjects
+          Categories
         </Typography>
         <TextField
           variant="outlined"
@@ -305,7 +305,7 @@ export default function SubjectTable({ addSubject, editSubject }) {
           onClick={addSubject}
           disableRipple
         >
-          Add Subject
+          Add New
         </Button>
       </div>
       <Table className={classes.table} aria-label="customized table">
@@ -335,10 +335,10 @@ export default function SubjectTable({ addSubject, editSubject }) {
                 <TableCell>
                   <Link
                     component={RouterLink}
-                    to={`/question/${params.category}`}
+                    to={`/subject/${row.id}`}
                     onClick={() => selectSubject(row)}
                   >
-                    {row?.subject_name}
+                    {row?.category_name}
                   </Link>
                 </TableCell>
                 <TableCell>{formatDate(row?.updated_at)}</TableCell>

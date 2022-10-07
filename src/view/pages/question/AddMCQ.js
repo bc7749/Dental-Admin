@@ -25,7 +25,9 @@ import DraftEditor from "../../component/Editor";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Formik } from "formik";
 import * as yup from "yup";
-import SubjectAutocomplete from "../subject/SubjectAutocomplete";
+import SubjectAutocomplete, {
+  CategoryAutoComplete,
+} from "../test/SubjectAutocomplete";
 import TopicAutocomplete from "../topic/TopicAutocomplete";
 import SubTopicAutocomplete from "../subTopic/SubTopicAutocomplete";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +40,12 @@ import { BACKEND_URL } from "../../utils/formatDate";
 import InputDropDown from "../../component/SelectInput";
 import UIAlert from "../../component/Alert";
 import { useNavigate, useHistory } from "react-router-dom";
+import { newAddMCQ } from "../../../API/Questions";
+import {
+  newGetAllCategory,
+  newgetAllPackage,
+  newGetAllSubjects,
+} from "../../../API/package";
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: "2rem",
@@ -120,10 +128,29 @@ export default function AddMCQ() {
   const dispatch = useDispatch();
   const [Packages, setPackages] = useState([]);
   const [showAlert, setShowAlert] = useState({ open: false, message: "" });
+  const [getallCAtegory, setGetallCAtegory] = useState([]);
+  const [getAllSubjects, setgetAllSubjects] = useState([]);
+
+  useEffect(() => {
+    newGetAllCategory((res) => {
+      console.log("getallcategory", res);
+      setGetallCAtegory(res.data);
+    });
+  }, []);
+  useEffect(() => {
+    newGetAllSubjects(1, (res) => {
+      console.log("getallcategory", res);
+      setgetAllSubjects(res.data);
+    });
+  }, []);
+
   useEffect(async () => {
-    const { data } = await axios.get(BACKEND_URL + "/api/v1/package");
-    setPackages(data.data);
-    console.log(data, "<<<<packages");
+    newgetAllPackage((res) => {
+      console.log(res, "<<<allPackage");
+      setPackages(res.data);
+    });
+    // const { data } = await axios.get(BACKEND_URL + "/api/v1/package");
+    // console.log(data, "<<<<packages");
   }, []);
 
   const { loading } = useSelector(questionSelectors.getQuestionUi.form);
@@ -131,6 +158,8 @@ export default function AddMCQ() {
   const [formData, setFormData] = useState({
     package: "",
     questionTitle: "",
+    category: "",
+    subject: "",
     questionType: DIFFICULTY.MEDIUM,
     options: [
       {
@@ -154,6 +183,7 @@ export default function AddMCQ() {
   });
   const onSubmit = async (values, { resetForm }) => {
     console.log(values, "<<<<<values");
+
     return null;
     const result = await dispatch(createQuestion({ questionData: values }));
 
@@ -257,16 +287,44 @@ export default function AddMCQ() {
         questionType: questionType,
         options,
         explaination,
+        category_id: formData.category,
+        subject_id: formData.subject,
       };
-      console.log(bodyData, "<<<,body data to send");
-      const { data } = await axios.post(
-        `${BACKEND_URL}/api/v1/package-question`,
-        { ...bodyData }
+      console.log(bodyData, "<<<bodydatatosend");
+      const isCorrect = () => {
+        if (options[0].isCorrect) return 1;
+        if (options[1].isCorrect) return 2;
+        if (options[2].isCorrect) return 3;
+        if (options[3].isCorrect) return 4;
+      };
+      newAddMCQ(
+        {
+          question: questionTitle,
+          description: explaination,
+          subject_id: formData.subject,
+          category_id: formData.category,
+          level: 1,
+          option1: options[0].option,
+          option2: options[1].option,
+          option3: options[2].option,
+          option4: options[3].option,
+          is_correct: isCorrect(),
+        },
+        (res) => {
+          console.log(res);
+          alert("Question Added");
+          window.location.reload(true);
+        }
       );
-      console.log(data, "<<<<data");
-      if (data.success) {
-        history.push(`/question/${bodyData.package}`);
-      }
+
+      // const { data } = await axios.post(
+      //   `${BACKEND_URL}/api/v1/package-question`,
+      //   { ...bodyData }
+      // );
+      // console.log(data, "<<<<data");
+      // if (data.success) {
+      //   history.push(`/question/${bodyData.package}`);
+      // }
     }
   };
 
@@ -296,7 +354,7 @@ export default function AddMCQ() {
         }) => (
           <div className={classes.form}>
             <div className={classes.formItem}>
-              <GrayTypography>Packages</GrayTypography>
+              <GrayTypography>Category</GrayTypography>
               {/* <InputDropDown
                 options={Packages}
                 // setSelectedValue={setFormData}
@@ -304,12 +362,33 @@ export default function AddMCQ() {
                 name="package"
               /> */}
               <SubjectAutocomplete
-                name="packageName"
-                packages={Packages}
+                name="category"
+                packages={getallCAtegory}
                 error={Boolean(touched.subject && errors.subject)}
                 helperText={touched.subject && errors.subject}
                 subjectId={values.topic}
+                handleFormData={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+              />
+            </div>
+            <div className={classes.formItem}>
+              <GrayTypography>Subjects </GrayTypography>
+              {/* <InputDropDown
+                options={Packages}
+                // setSelectedValue={setFormData}
                 handleFormData={handleFormData}
+                name="package"
+              /> */}
+              <CategoryAutoComplete
+                name="subject"
+                packages={getAllSubjects}
+                error={Boolean(touched.subject && errors.subject)}
+                helperText={touched.subject && errors.subject}
+                subjectId={values.topic}
+                handleFormData={(e) =>
+                  setFormData({ ...formData, subject: e.target.value })
+                }
               />
             </div>
 

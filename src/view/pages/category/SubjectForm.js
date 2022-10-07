@@ -6,7 +6,6 @@ import {
   Box,
   IconButton,
   CircularProgress,
-  Select,
 } from "@material-ui/core";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -19,17 +18,15 @@ import {
   updateSubject,
   subjectSelectors,
 } from "../../../application/reducers/subjectSlice";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../../utils/formatDate";
 import {
   addPackage,
+  newAddCategory,
   newaddPackage,
-  newAddSubject,
-  newGetAllCategory,
-  newgetAllPackage,
 } from "../../../API/package";
-import { Alert, InputLabel, MenuItem } from "@mui/material";
+import { Alert } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,8 +88,6 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
   const dispatch = useDispatch();
   // const selectedSubject = useSelectedSubject(editSubjectId);
 
-  const [packages, setPackages] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const { loading } = useSelector(subjectSelectors.getSubjectUi.form);
   const [handleForm, setHandleForm] = useState({
     title: "",
@@ -116,11 +111,6 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
       closeForm();
     }
   };
-  useEffect(() => {
-    newGetAllCategory((res) => {
-      setPackages(res.data);
-    });
-  }, []);
 
   const editInitialValues = {
     // id: selectedSubject?.id,
@@ -136,16 +126,14 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
     setHandleForm({ ...handleForm, [name]: value });
   };
   const onsubmitForm = async (e) => {
-    if (selectedCategory == null) return Alert("Select Cateogyr");
     e.preventDefault();
     try {
-      newAddSubject(handleForm.title, selectedCategory, (res) => {
+      newAddCategory(handleForm.title, (res) => {
         console.log(res, "<<<newpackage");
-        alert("New Subject Added");
         window.location.reload(true);
-
+        alert(" New Category Added");
         if (res.status) {
-          Alert("Subject Added");
+          Alert(res.message);
           closeForm();
           window.location.reload(true);
         }
@@ -180,7 +168,7 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
         <Box component={"form"} className={classes.root}>
           <div className={classes.formHeader}>
             <Typography color="inherit" variant="h4" align="center" mb="2rem">
-              {Boolean(editSubjectId) ? "Edit Packagesss" : "Add New Subject"}
+              {Boolean(editSubjectId) ? "Edit Packagess" : "Add New Category"}
             </Typography>
             <IconButton onClick={closeForm}>
               <CloseIcon />
@@ -191,7 +179,7 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
             <TextField
               variant="outlined"
               id="title"
-              label="Subject Name"
+              label="Category Name"
               name={"title"}
               className={classes.input}
               placeholder="Title"
@@ -201,29 +189,7 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
               onChange={handleChange}
               onBlur={handleBlur}
             />
-            <div style={{ border: "1px solid gray", width: "100%" }}>
-              <InputLabel id="demo-simple-select-label">
-                Select Category
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={selectedCategory}
-                label="Age"
-                placeholder="Age"
-                style={{ width: "100%" }}
-                onChange={(e) => {
-                  console.log(e.target.value);
-                  setSelectedCategory(e.target.value);
-                }}
-              >
-                {packages.map((item) => {
-                  return (
-                    <MenuItem value={item.id}>{item.category_name}</MenuItem>
-                  );
-                })}
-              </Select>
-            </div>
+
             <Button
               type="submit"
               onClick={onsubmitForm}
@@ -236,7 +202,7 @@ export default function SubjectForm({ closeForm, editSubjectId }) {
               ) : Boolean(editSubjectId) ? (
                 "Edit Package"
               ) : (
-                "Add Subject"
+                "Add New"
               )}
             </Button>
           </div>

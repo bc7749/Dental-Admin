@@ -93,7 +93,7 @@ export default function PaginationBreadcrumbs() {
             component={RouterLink}
             // to="/question-bank"
           >
-            Question Bank
+            {/* Question Bank */}
           </Link>
           {selectedSubject && (
             <Link
@@ -139,7 +139,7 @@ export default function PaginationBreadcrumbs() {
             component={RouterLink}
             // to="/question-bank"
           >
-            Question Bank
+            {/* Question Bank */}
           </Link>
           {selectedSubTopic && (
             <Link

@@ -118,9 +118,17 @@ const links = [
     icon: Task,
     children: [
       {
-        to: "/subject",
-        name: "Package",
+        to: "/test",
+        name: "Test",
       },
+      {
+        to: "/category",
+        name: "Category",
+      },
+      // {
+      //   to: "/subject",
+      //   name: "Subject",
+      // },
       // {
       //   to: "/topic",
       //   name: "Topic",

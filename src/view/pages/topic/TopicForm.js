@@ -19,7 +19,7 @@ import {
   topicSelectors,
 } from "../../../application/reducers/topicSlice";
 import { useMemo } from "react";
-import SubjectAutocomplete from "../subject/SubjectAutocomplete";
+import SubjectAutocomplete from "../test/SubjectAutocomplete";
 import { globalSelectors } from "../../../application/reducers/globalSlice";
 
 const useStyles = makeStyles((theme) => ({

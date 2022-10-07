@@ -2,6 +2,7 @@ import { makeStyles, Typography } from "@material-ui/core";
 import { Person as PersonIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { getDashboardData } from "../../API/dashboard";
 import { BACKEND_URL } from "../utils/formatDate";
 
 const useStyles = makeStyles((theme) => ({
@@ -60,8 +61,12 @@ export default function Dashboard() {
   });
   useEffect(async () => {
     const { data } = await axios.get(`${BACKEND_URL}/api/v1/landing/all`);
-    console.log(data, "<<<landing");
-    setLandingData(data.data);
+    getDashboardData((res) => {
+      setLandingData(res);
+      console.log(res, "<<<newapi");
+    });
+    // console.log(data, "<<<landing");
+    // setLandingData(data);
   }, []);
 
   const classes = useStyles();
@@ -71,19 +76,36 @@ export default function Dashboard() {
       <div className={classes.cardCont}>
         <Card
           icon={PersonIcon}
-          label="Number of users registered"
-          number={LandingData.users}
+          label="Number of categories"
+          number={LandingData?.total_category}
         />
         <Card
           icon={PersonIcon}
-          label="Question in question bank"
-          number={LandingData.Question}
+          label="Question in questions"
+          number={LandingData?.total_question}
         />
         <Card
           icon={PersonIcon}
-          label="Number of Packages available"
-          number={LandingData.Packages}
+          label="Number of test"
+          number={LandingData?.total_test}
         />
+        {/* <div></div> */}
+
+        {/* <Card icon={PersonIcon} label="Active Users" number={0} /> */}
+      </div>
+      <div className={classes.cardCont}>
+        <Card
+          icon={PersonIcon}
+          label="Number of Test available"
+          number={LandingData?.total_packages}
+        />
+        <Card
+          icon={PersonIcon}
+          label="Number of Subjects"
+          number={LandingData?.total_subject}
+        />
+        {/* <div></div> */}
+
         {/* <Card icon={PersonIcon} label="Active Users" number={0} /> */}
       </div>
     </div>
